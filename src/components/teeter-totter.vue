@@ -1,24 +1,40 @@
 <template>
   <div :class="$style.component">
-    <weight shape="square" />
-    <weight shape="triangle" />
-    <weight shape="rectangle" />
+    <falling-block
+      v-if="fallingBlock"
+      :falling-block="fallingBlock" />
+
     <swing />
+
     <support />
   </div>
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex';
+import FallingBlock from './falling-block.vue';
 import Support from './support.vue';
 import Swing from './swing.vue';
-import Weight from './weight.vue';
 
 export default {
   name: 'teeter-totter',
   components: {
+    FallingBlock,
     Support,
     Swing,
-    Weight,
+  },
+  computed: {
+  ...mapState({
+      fallingBlock: state => state.fallingBlock,
+    }),
+  },
+  mounted() {
+    this.addBlock();
+  },
+  methods: {
+    ...mapActions([
+       'addBlock',
+    ]),
   },
 };
 </script>
