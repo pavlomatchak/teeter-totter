@@ -1,4 +1,4 @@
-import { generateBlock } from '../helpers';
+import { addLoad, calculateOffset, generateBlock } from '../helpers';
 import { sides } from '../config';
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -17,7 +17,10 @@ export default new Vuex.Store({
   },
   mutations: {
     addBlock(state) {
-      state.fallingBlock = generateBlock(state.swingPosition, state.currentSide);
+      state.fallingBlock = null;
+      setTimeout(() => {
+        state.fallingBlock = generateBlock(state.swingPosition, state.currentSide);
+      }, 100);
     },
     changeSide(state, side) {
       state.currentSide = side;
@@ -27,12 +30,17 @@ export default new Vuex.Store({
     },
     finishFalling(state) {
       state[state.currentSide].push(state.fallingBlock);
-      state.fallingBlock = null;
       state.currentSide = state.currentSide === sides.RIGHT_SIDE_BLOCKS ?
         sides.LEFT_SIDE_BLOCKS : sides.RIGHT_SIDE_BLOCKS;
     },
+    moveBlockHorizontally(state, left) {
+      state.fallingBlock.position.left = left;
+    },
     setFallingBlock(state, block) {
       state.fallingBlock = block;
+    },
+    setOffset(state, offset) {
+      state.fallingBlock.offset = offset;
     },
     setSwingPosition(state, position) {
       state.swingPosition = position;
@@ -42,12 +50,25 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    addBlock(context, side) {
-      context.commit('addBlock', side);
+    addBlock({ commit }) {
+      commit('addBlock');
     },
-    finishFalling(context) {
-      context.commit('finishFalling');
-      context.commit('addBlock');
+    finishFalling({ state, commit }) {
+      commit('setOffset', calculateOffset({
+        item: state.fallingBlock,
+        side: state.currentSide,
+        swingPosition: state.swingPosition,
+      }));
+      commit('finishFalling');
+      commit('addBlock');
+    },
+  },
+  getters: {
+    getLeftLoad(state) {
+      return addLoad(state[sides.LEFT_SIDE_BLOCKS]);
+    },
+    getRightLoad(state) {
+      return addLoad(state[sides.RIGHT_SIDE_BLOCKS]);
     },
   },
 });

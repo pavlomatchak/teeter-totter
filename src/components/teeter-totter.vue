@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
+import { sides } from '../config';
 import FallingBlock from './falling-block.vue';
 import Support from './support.vue';
 import Swing from './swing.vue';
@@ -25,16 +26,38 @@ export default {
   },
   computed: {
   ...mapState({
+      currentSide: state => state.currentSide,
       fallingBlock: state => state.fallingBlock,
+      swingPosition: state => state.swingPosition,
     }),
   },
   mounted() {
     this.addBlock();
+    this.arrowsListener();
   },
   methods: {
-    ...mapActions([
-       'addBlock',
-    ]),
+    ...mapActions(['addBlock']),
+    ...mapMutations(['moveBlockHorizontally']),
+    arrowsListener() {
+      const leftBorder = this.swingPosition.left;
+      const center = leftBorder + (this.swingPosition.width / 2);
+
+      document.addEventListener('keydown', event => {
+        if (this.fallingBlock && this.currentSide === sides.LEFT_SIDE_BLOCKS) {
+          if (event.keyCode == 37) {
+            if (this.fallingBlock.position.left >= (leftBorder + (this.fallingBlock.width / 2))) {
+              this.moveBlockHorizontally(this.fallingBlock.position.left - 20);
+            }
+          }
+
+          if (event.keyCode == 39) {
+            if (this.fallingBlock.position.left <= (center - (this.fallingBlock.width / 2))) {
+              this.moveBlockHorizontally(this.fallingBlock.position.left + 20);
+            }
+          }
+        }
+      });
+    },
   },
 };
 </script>

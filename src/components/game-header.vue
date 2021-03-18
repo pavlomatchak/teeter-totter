@@ -3,11 +3,17 @@
     <button
       v-text="buttonLabel"
       @click="toggleGame" />
+
+    <div :class="$style.status">
+      <span>Left load: {{ getLeftLoad }}</span>
+
+      <span>Right load: {{ getRightLoad }}</span>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'game-header',
@@ -15,6 +21,10 @@ export default {
     ...mapState({
       isGamePaused: state => state.isGamePaused,
     }),
+    ...mapGetters([
+      'getLeftLoad',
+      'getRightLoad',
+    ]),
     buttonLabel() {
       return this.isGamePaused ? 'Resume' : 'Pause';
     },
@@ -32,5 +42,17 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px 10%;
+}
+
+.status {
+  display: flex;
+
+  span {
+    display: inline-flex;
+
+    &:first-child {
+      margin-right: 10px;
+    }
+  }
 }
 </style>

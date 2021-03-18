@@ -1,12 +1,13 @@
 <template>
   <div
-    v-text="weight"
     ref="block"
     :class="[
       $style.component,
       $style[details.shape],
     ]"
-    :style="inlineStyles" />
+    :style="inlineStyles">
+    <span v-text="details.weight" />
+  </div>
 </template>
 
 <script>
@@ -18,16 +19,16 @@ export default {
       type: Object,
       default: () => {},
     },
+    test: Boolean,
   },
   computed: {
     inlineStyles() {
       return {
+        height: `${this.details.height}px`,
         left: `${this.details.position.left}px`,
         top: `${this.details.position.top}px`,
+        width: `${this.details.width}px`,
       };
-    },
-    weight() {
-      return `${this.details.weight}kg`;
     },
   },
   mounted() {
@@ -40,34 +41,28 @@ export default {
 .component {
   position: absolute;
   transform: translateX(-50%);
+
+  span {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
-.rectangle {
-  align-items: center;
+.circle {
   background-color: #78d8f0;
-  display: inline-flex;
-  height: 100px;
-  justify-content: center;
-  width: 80px;
+  border-radius: 50%;
 }
 
 .square {
-  align-items: center;
   background-color: #059415;
-  display: inline-flex;
-  height: 80px;
-  justify-content: center;
-  width: 80px;
 }
 
 .triangle {
-  align-items: center;
-  border-color: transparent transparent #ded304 transparent;
-  border-style: solid;
-  border-width: 0 35px 80px 35px;
-  display: inline-flex;
+  border-color: transparent transparent rgba(0,0,0,.1);
+  border-width: 0 .5em .5em;
   height: 0;
-  justify-content: center;
   width: 0;
 }
 </style>
