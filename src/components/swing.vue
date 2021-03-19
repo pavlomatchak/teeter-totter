@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="$style.component"
+    :style="inlineStyle"
     ref="swing">
     <blocks />
 
@@ -9,12 +9,31 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex';
+import { constants } from '../config';
+import { mapMutations, mapState } from 'vuex';
 import Blocks from'./blocks';
 
 export default {
   name: 'swing',
   components: { Blocks },
+  computed: {
+    ...mapState({
+      swingTilt: state => state.swingTilt,
+      inlineStyle() {
+        let rotateDegree = (this.swingTilt.difference * 17) / 30; // 17 - degree to ground. 30% - max tilt
+
+        if (rotateDegree > 17) {
+          rotateDegree = 17;
+        }
+
+        if (this.swingTilt.direction === constants.LEFT) {
+          rotateDegree = `-${rotateDegree.toString()}`;
+        }
+
+        return { transform: `rotate(${rotateDegree}deg)` };
+      },
+    }),
+  },
   mounted() {
     const { x, y, height, width, top, left} = this.$refs.swing.getBoundingClientRect();
     this.setSwingPosition({ x, y, height, width, top, left});

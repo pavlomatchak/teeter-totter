@@ -1,8 +1,14 @@
 <template>
   <div :class="$style.component">
-    <button
-      v-text="buttonLabel"
-      @click="toggleGame" />
+    <div :class="$style.actions">
+      <button
+        v-text="'Restart'"
+        @click="restartGame" />
+
+      <button
+        v-text="buttonLabel"
+        @click="toggleGame" />
+    </div>
 
     <div :class="$style.status">
       <span>Left load: {{ getLeftLoad }}</span>
@@ -13,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'game-header',
@@ -30,7 +36,11 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(['toggleGame']),
+    ...mapActions(['restartGame']),
+    ...mapMutations(['togglePaused']),
+    toggleGame() {
+      this.togglePaused(!this.isGamePaused);
+    },
   },
 };
 </script>
@@ -42,6 +52,12 @@ export default {
   display: flex;
   justify-content: space-between;
   padding: 10px 10%;
+}
+
+.actions {
+  button:first-child {
+    margin-right: 10px;
+  }
 }
 
 .status {

@@ -6,7 +6,9 @@
       $style[details.shape],
     ]"
     :style="inlineStyles">
-    <span v-text="details.weight" />
+    <span
+      v-text="details.weight"
+      :style="labelStyle" />
   </div>
 </template>
 
@@ -19,20 +21,39 @@ export default {
       type: Object,
       default: () => {},
     },
-    test: Boolean,
   },
   computed: {
     inlineStyles() {
+      const { bottom, left, top } = this.details.position;
+      const { height, width } = this.details;
+
+      if (this.details.shape === 'triangle') {
+        return {
+          borderWidth: `0 ${width}px ${width}px`,
+          bottom: `${bottom}px`,
+          left: `${left}px`,
+          top: `${top}px`,
+        };
+      }
+
       return {
-        height: `${this.details.height}px`,
-        left: `${this.details.position.left}px`,
-        top: `${this.details.position.top}px`,
-        width: `${this.details.width}px`,
+        bottom: `${bottom}px`,
+        width: `${width}px`,
+        left: `${left}px`,
+        top: `${top}px`,
+        height: `${height}px`,
+      };
+    },
+    labelStyle() {
+      const { fontSize } = this.details;
+
+      return {
+        fontSize: `${fontSize}px`,
       };
     },
   },
   mounted() {
-    this.$emit('update-block-height', this.$refs.block.getBoundingClientRect().height);
+    this.$emit('update-block', this.$refs.block.getBoundingClientRect());
   },
 };
 </script>
@@ -43,10 +64,7 @@ export default {
   transform: translateX(-50%);
 
   span {
-    left: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    display: block;
   }
 }
 
@@ -59,10 +77,22 @@ export default {
   background-color: #059415;
 }
 
+.circle,
+.square {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+}
+
 .triangle {
+  border: .05em solid rgba(0,0,0,.1);
   border-color: transparent transparent rgba(0,0,0,.1);
-  border-width: 0 .5em .5em;
-  height: 0;
-  width: 0;
+
+  span {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 </style>

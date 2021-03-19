@@ -1,7 +1,7 @@
 <template>
   <block
     :details="details"
-    @update-block-height="onUpdateBlockHeight" />
+    @update-block="onUpdateBlock" />
 </template>
 
 <script>
@@ -22,13 +22,14 @@ export default {
   },
   computed: {
     ...mapState({
+      isGameOver: state => state.isGameOver,
       isGamePaused: state => state.isGamePaused,
       swingPosition: state => state.swingPosition,
     }),
   },
   mounted() {
     const fall = setInterval(() => {
-      if (!this.isGamePaused) {
+      if (!this.isGamePaused && !this.isGameOver) {
         if (this.details.position.top < (this.swingPosition.top - this.blockHeight)) {
           this.details.position.top += 1;
         } else {
@@ -36,12 +37,13 @@ export default {
           this.finishFalling(this.details);
         }
       }
-    },1);
+    },10);
   },
   methods: {
     ...mapActions(['finishFalling']),
-    onUpdateBlockHeight(height) {
+    onUpdateBlock({ height, width }) {
       this.blockHeight = height;
+      this.$emit('update-block-width', width)
     },
   },
 };

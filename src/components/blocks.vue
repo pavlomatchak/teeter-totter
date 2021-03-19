@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="$style.component">
     <block
       v-for="block in leftSideBlocks"
       :details="block"
@@ -33,3 +33,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" module>
+.component {
+  position: relative;
+}
+</style>
